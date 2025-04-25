@@ -1,4 +1,7 @@
 #include "SDL.h"
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
 
 #include <stdio.h>
 
@@ -10,13 +13,15 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 const unsigned int ffps = 60; /* fixed frame rate for physics */
-const Uint64 fft = 1000/ffps; /* ms/frame for 60 fps */
+const Uint64 fdt = 1000/ffps; /* ms/frame for 60 fps */
 
 SDL_Window *window = NULL;
 SDL_Surface *surf = NULL;
 SDL_Event event;
 
-static void init(void) {
+lua_State *L = NULL;
+
+static void sdl_init(void) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     printf("[error] Couldn't initialize SDL. SDL_Error: %s\n", SDL_GetError());
     exit(EXIT_FAILURE);
@@ -36,12 +41,14 @@ static void init(void) {
   SDL_UpdateWindowSurface(window);
 }
 
-static void update(int i) {
+static void update(void) {
   Uint64 starttime = SDL_GetTicks();
 
   /* poll for quit event, hold window open until then */
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
+      lua_close(L);
+      SDL_FreeSurface(surf);
       SDL_DestroyWindow(window);
       SDL_Quit();
       exit(EXIT_SUCCESS);
@@ -49,15 +56,17 @@ static void update(int i) {
   }
 
   /* Game Loop */
-  printf("%d\n", i);
+  luaL_dostring(L, "print(fdeltatime)");
+
+  /* -- end of game loop section -- */
 
   Uint64 endtime = SDL_GetTicks();
   Uint64 elapsed = endtime - starttime;
 
   /* delay frame to keep framerate ~constant */
   Uint64 delay;
-  if (elapsed <= fft)
-    delay = fft - elapsed;
+  if (elapsed <= fdt)
+    delay = fdt - elapsed;
   else
     delay = 0;
 
@@ -65,11 +74,18 @@ static void update(int i) {
 }
 
 int main(int argc, char **argv) {
-  init();
+  /* initialize SDL and Lua state */
+  sdl_init();
+  L = luaL_newstate();
+  luaL_openlibs(L);
 
-  int i = 0;
+  lua_pushnumber(L, ffps);
+  lua_setglobal(L, "fframerate");
+  lua_pushnumber(L, fdt);
+  lua_setglobal(L, "fdeltatime");
+
   while (1) {
-    update(i++);
+    update();
   }
 
   return EXIT_SUCCESS;
