@@ -4,23 +4,37 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#include <stdio.h>
+#include "eon.h"
+#include "sprite.h"
 
-/* wrapper macros over common SDL calls */
-#define fillbg()  SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 0xDE, 0xAD, 0x06))
-#define paintbg(r,g,b)  SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, r, g, b))
+#include <stdio.h>
+#include <stdlib.h>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-
-const unsigned int ffps = 60; /* fixed frame rate for physics */
-const Uint64 fdt = 1000/ffps; /* ms/frame for 60 fps */
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Event event;
 
 lua_State *L = NULL;
+
+/* TODO: free this on quit */
+struct game_state *G = NULL;
+
+/* TODO: decouple rendering from main eon.c file */
+void render_system(const struct game_state *G, SDL_Renderer *renderer) {
+  SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xFF);
+  SDL_RenderClear(renderer);
+
+  SDL_SetRenderDrawColor(renderer, 0xDE, 0xAD, 0x06, 0xFF);
+
+  /* draw all sprite components */
+  const SDL_Rect rect = { 10, 10, 320, 240 };
+  SDL_RenderFillRect(renderer, &rect);
+
+  SDL_RenderPresent(renderer);
+}
 
 static void sdl_init(void) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -56,25 +70,8 @@ static void update(void) {
     }
   }
 
-
-  /* Game Loop */
-  luaL_dostring(L, "print(fdeltatime)");
-
-  /* -- end of game loop section -- */
-
-
-  /* Rendering */
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-  SDL_RenderClear(renderer);
-
-  SDL_SetRenderDrawColor(renderer, 0xDE, 0xAD, 0x06, 0xFF);
-  const SDL_Rect rect = { 10, 10, 320, 240 };
-  SDL_RenderFillRect(renderer, &rect);
-
-  SDL_RenderPresent(renderer);
-
-  /* -- end of rendering section -- */
-
+  puts("ok");
+  render_system(G, renderer);
 
   Uint64 endtime = SDL_GetTicks();
   Uint64 elapsed = endtime - starttime;
@@ -95,10 +92,8 @@ int main(int argc, char **argv) {
   L = luaL_newstate();
   luaL_openlibs(L);
 
-  lua_pushnumber(L, ffps);
-  lua_setglobal(L, "fframerate");
-  lua_pushnumber(L, fdt);
-  lua_setglobal(L, "fdeltatime");
+  /* set lua bindings */
+  /* ... */
 
   while (1) {
     update();
