@@ -18,6 +18,7 @@
 #define EON_H
 
 #include "renderer.h"
+#include "sprite.h"
 
 /* TODO: move to physics component */
 extern const unsigned int ffps; /* fixed frame rate for physics */
@@ -25,11 +26,11 @@ extern const Uint64 fdt; /* ms/frame for 60 fps */
 
 extern SDL_Renderer *renderer;
 
-/*
 struct game_state {
-  struct sprite sprites[8];
+  struct sprite *sprites;
 };
-*/
+
+extern struct game_state G;
 
 void cleanup(void);
 

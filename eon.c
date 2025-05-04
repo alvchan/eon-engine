@@ -33,8 +33,11 @@ const Uint64 fdt = 1000/ffps;
 
 lua_State *L = NULL;
 
+unsigned int num_sprites = 8;
+
 /* TODO: free this on quit */
-/* struct game_state *G = NULL; */
+/* TODO: init this */
+struct game_state G;
 
 static void update(void) {
   Uint64 starttime = SDL_GetTicks();
@@ -74,14 +77,31 @@ int main(int argc, char **argv) {
   /* set lua bindings */
   /* ... */
 
+  struct sprite sp = {
+    .rect = { 96, 96, 256, 256 },
+    .r = 0xDE,
+    .g = 0xAD,
+    .b = 0x06
+  };
+
+  G = (struct game_state){ malloc(sizeof(struct sprite) * num_sprites) };
+  G.sprites[0] = sp;
+  G.sprites[1] = (struct sprite){ {0,0,256,256}, 0xFF, 0x0, 0x0 };
+  G.sprites[2] = (struct sprite){ {32,32,256,256}, 0x0, 0xFF, 0x0 };
+  G.sprites[3] = (struct sprite){ {64,64,256,256}, 0x0, 0x0, 0xFF };
+
   while (1) {
     update();
   }
+
+  cleanup();
 
   return EXIT_SUCCESS;
 }
 
 void cleanup(void) {
+  free(G.sprites);
+
   if (L)
     lua_close(L);
 

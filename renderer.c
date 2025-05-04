@@ -53,11 +53,11 @@ void render_system(void) {
   SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xFF);
   SDL_RenderClear(renderer);
 
-  SDL_SetRenderDrawColor(renderer, 0xDE, 0xAD, 0x06, 0xFF);
-
   /* draw all sprite components */
-  const SDL_Rect rect = { 10, 10, 320, 240 };
-  SDL_RenderFillRect(renderer, &rect);
+  for (int i = 0; i < num_sprites; i++) {
+    SDL_SetRenderDrawColor(renderer, G.sprites[i].r, G.sprites[i].g, G.sprites[i].b, 0xFF);
+    SDL_RenderFillRect(renderer, &(G.sprites[i].rect));
+  }
 
   SDL_RenderPresent(renderer);
 }
