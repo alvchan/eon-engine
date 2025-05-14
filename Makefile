@@ -1,4 +1,4 @@
-SDL_FLAGS = $(shell sdl2-config --cflags --libs)
+SDL_FLAGS = $(shell pkg-config --cflags --libs SDL2_image) $(shell sdl2-config --cflags --libs)
 LUA_FLAGS = $(shell pkg-config --cflags --libs lua)
 
 eon-engine: eon.c eon.h renderer.o

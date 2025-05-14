@@ -15,6 +15,7 @@
  */
 
 #include "SDL.h"
+#include "SDL_image.h"
 
 #include "lua.h"
 #include "lauxlib.h"
@@ -100,10 +101,12 @@ int main(int argc, char **argv) {
 }
 
 void cleanup(void) {
-  free(G.sprites);
-
   if (L)
     lua_close(L);
+
+  if (texture)
+    SDL_DestroyTexture(texture);
+  free(G.sprites);
 
   if (renderer)
     SDL_DestroyRenderer(renderer);

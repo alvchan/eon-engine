@@ -15,6 +15,7 @@
  */
 
 #include "SDL.h"
+#include "SDL_image.h"
 
 #include "eon.h"
 #include "renderer.h"
@@ -24,6 +25,7 @@ const int SCREEN_HEIGHT = 480;
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+SDL_Texture *texture = NULL;
 SDL_Event event;
 
 void sdl_init(void) {
@@ -38,14 +40,20 @@ void sdl_init(void) {
 
   if (window == NULL) {
     printf("[error] Couldn't create a window. SDL_Error: %s\n", SDL_GetError());
-    exit(EXIT_FAILURE);
+    cleanup();
   }
 
   renderer = SDL_CreateRenderer(window, -1, 0);
 
   if (renderer == NULL) {
     printf("[error] Couldn't create a renderer. SDL_Error: %s\n", SDL_GetError());
-    exit(EXIT_FAILURE);
+    cleanup();
+  }
+
+  texture = IMG_LoadTexture(renderer, "image.png");
+  if (texture == NULL) {
+    printf("[error] Couldn't load a texture (image.png). SDL_Error: %s\n", SDL_GetError());
+    cleanup();
   }
 }
 
@@ -58,6 +66,8 @@ void render_system(void) {
     SDL_SetRenderDrawColor(renderer, G.sprites[i].r, G.sprites[i].g, G.sprites[i].b, 0xFF);
     SDL_RenderFillRect(renderer, &(G.sprites[i].rect));
   }
+
+  SDL_RenderCopy(renderer, texture, NULL, NULL);
 
   SDL_RenderPresent(renderer);
 }

@@ -24,6 +24,7 @@ extern const int SCREEN_HEIGHT;
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
+extern SDL_Texture *texture;
 extern SDL_Event event;
 
 void sdl_init(void);
