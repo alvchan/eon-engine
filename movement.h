@@ -14,16 +14,12 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef MOVEMENT_H
+#define MOVEMENT_H
 
-extern unsigned int num_sprites;
-
-struct sprite {
-  SDL_Rect rect;
-  Uint8 r;
-  Uint8 g;
-  Uint8 b;
-};
+void move_left(void);
+void move_right(void);
+void move_up(void);
+void move_down(void);
 
 #endif

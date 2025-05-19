@@ -14,16 +14,25 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef SPRITE_H
-#define SPRITE_H
+#include "eon.h"
+#include "movement.h"
 
-extern unsigned int num_sprites;
+#include <stdio.h>
 
-struct sprite {
-  SDL_Rect rect;
-  Uint8 r;
-  Uint8 g;
-  Uint8 b;
-};
+const int SPEED = 5;
 
-#endif
+void move_left(void) {
+  G.sprites[0].rect.x -= SPEED * fdt;
+}
+
+void move_right(void) {
+  G.sprites[0].rect.x += SPEED * fdt;
+}
+
+void move_up(void) {
+  G.sprites[0].rect.y -= SPEED * fdt;
+}
+
+void move_down(void) {
+  G.sprites[0].rect.y += SPEED * fdt;
+}

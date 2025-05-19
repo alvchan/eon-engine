@@ -61,13 +61,13 @@ void render_system(void) {
   SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xFF);
   SDL_RenderClear(renderer);
 
+  SDL_RenderCopy(renderer, texture, NULL, NULL);
+
   /* draw all sprite components */
   for (int i = 0; i < num_sprites; i++) {
     SDL_SetRenderDrawColor(renderer, G.sprites[i].r, G.sprites[i].g, G.sprites[i].b, 0xFF);
     SDL_RenderFillRect(renderer, &(G.sprites[i].rect));
   }
-
-  SDL_RenderCopy(renderer, texture, NULL, NULL);
 
   SDL_RenderPresent(renderer);
 }

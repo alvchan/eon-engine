@@ -24,6 +24,10 @@
 #include "eon.h"
 #include "renderer.h"
 
+#ifdef DEBUG_MODE
+#include "movement.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -48,6 +52,34 @@ static void update(void) {
     if (event.type == SDL_QUIT) {
       cleanup();
     }
+
+#ifdef DEBUG_MODE
+    /* movement code for demo/testing; not to be used otherwise */
+    else if (event.type == SDL_KEYDOWN) {
+      switch (event.key.keysym.sym) {
+        case SDLK_UP:
+          move_up();
+          break;
+
+        case SDLK_DOWN:
+          move_down();
+          break;
+
+        case SDLK_LEFT:
+          move_left();
+          break;
+
+        case SDLK_RIGHT:
+          move_right();
+          break;
+
+        default:
+          puts("wutt");
+          break;
+      }
+    }
+#endif
+
   }
 
   render_system();
@@ -66,7 +98,7 @@ static void update(void) {
 }
 
 int main(int argc, char **argv) {
-  /* full argc, argv main signature required for SDL */
+  /* full argc, argv main signature required for SDL; this stops compiler warnings */
   UNUSED(argc);
   UNUSED(argv);
 
